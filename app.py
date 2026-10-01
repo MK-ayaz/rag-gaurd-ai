@@ -32,65 +32,74 @@ render_header()
 # Sidebar
 with st.sidebar:
     st.markdown(
-        '<div style="font-size:1.3rem; font-weight:700; margin-bottom:12px;">🛡️ About</div>',
+        '<div style="font-size:1.1rem; font-weight:700; margin-bottom:10px; color:#e2e8f0;">🛡️ About RugGuard AI</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
-        "RugGuard AI analyzes any crypto token contract using **4 specialized agents** "
-        "and combines their findings into a **0–100 risk score** with a plain-language "
-        "AI explanation.",
+        "Analyzes any token contract using **4 AI agents** and returns a "
+        "**0–100 risk score** with a plain-language AI explanation.",
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
     st.markdown(
-        '<div style="font-size:0.85rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">'
-        "🔗 Supported Chains</div>",
+        '<div style="font-size:0.75rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;">'
+        "🔗 Chains</div>",
         unsafe_allow_html=True,
     )
     for key, cfg in CHAINS.items():
         st.markdown(
-            f'<div class="chain-pill">'
-            f'<span>{cfg["name"]}</span>'
-            f'<span style="color:#475569; font-size:0.75rem;">ID {cfg["chain_id"]}</span>'
+            f'<div style="display:flex; align-items:center; gap:8px; padding:5px 0; font-size:0.82rem;">'
+            f'<span style="color:#e2e8f0; font-weight:500;">{cfg["name"]}</span>'
+            f'<span style="color:#334155; font-size:0.7rem;">{cfg["native_currency"]}</span>'
             f'</div>',
             unsafe_allow_html=True,
         )
 
-    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
     st.markdown(
-        '<div style="font-size:0.85rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">'
+        '<div style="font-size:0.75rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;">'
         "⚙️ Data Sources</div>",
         unsafe_allow_html=True,
     )
     st.markdown(
-        "- GoPlusLabs (token security)\n"
-        "- DexScreener (liquidity & volume)\n"
-        "- Honeypot.is (honeypot detection)\n"
-        "- CoinGecko (listing verification)\n"
-        "- Groq / Llama 3 (AI explanations)",
+        "<span style='font-size:0.78rem; color:#475569; line-height:1.6;'>"
+        "GoPlusLabs · DexScreener · Honeypot.is · CoinGecko · Groq / Llama 3"
+        "</span>",
+        unsafe_allow_html=True,
     )
 
-    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
     render_disclaimer()
 
 # Main input
 chain_key, address = render_input_section(CHAINS, "ethereum")
 
 # Demo tokens
-st.markdown("### 📋 Try a Demo Token")
-demo_col1, demo_col2 = st.columns(2)
+st.markdown(
+    '<div style="text-align:center; margin-top:20px; margin-bottom:12px;">'
+    '<span style="font-size:0.8rem; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:0.06em;">📋 Quick Demo</span>'
+    '</div>',
+    unsafe_allow_html=True,
+)
+demo_col1, demo_col2, demo_col3 = st.columns(3)
 with demo_col1:
-    if st.button("Load USDT (Ethereum)"):
+    if st.button("USDT · ETH", width="stretch"):
         st.session_state["demo_address"] = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         st.session_state["demo_chain"] = "ethereum"
         st.rerun()
 with demo_col2:
-    if st.button("Load USDC (Ethereum)"):
+    if st.button("USDC · ETH", width="stretch"):
         st.session_state["demo_address"] = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
         st.session_state["demo_chain"] = "ethereum"
+        st.rerun()
+with demo_col3:
+    if st.button("USDT · BSC", width="stretch"):
+        st.session_state["demo_address"] = "0x55d398326f99059ff775485246999027b3197955"
+        st.session_state["demo_chain"] = "bsc"
+        st.rerun()
 
 # Handle demo button loading
 if "demo_address" in st.session_state:
@@ -155,9 +164,10 @@ if address:
         render_full_report(report)
 else:
     st.markdown(
-        '<p style="text-align:center; color:#64748b; margin-top:2rem; font-size:0.95rem;">'
-        "👆 Enter a token contract address above to begin analysis, "
-        "or try one of the demo tokens."
-        "</p>",
+        '<div class="empty-state">'
+        '<div class="empty-state-icon">🔍</div>'
+        '<div class="empty-state-text">Enter a token contract address above to begin analysis, '
+        'or try a demo token.</div>'
+        '</div>',
         unsafe_allow_html=True,
     )

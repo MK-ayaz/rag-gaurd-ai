@@ -1,4 +1,4 @@
-"""Main dashboard layout — modern professional UI."""
+"""Main dashboard layout — modern branded experience."""
 
 from __future__ import annotations
 
@@ -8,51 +8,63 @@ import plotly.graph_objects as go
 from models.risk_report import RiskReport
 from ui.styles import risk_class, risk_color_hex
 from ui.risk_gauge import render_risk_gauge
-from ui.agent_cards import render_agent_cards
 from utils.formatters import shorten_address, format_usd, format_token_name
 
 
+AGENT_META = [
+    ("contract", "🔍 Contract Auditor", "Smart contract security"),
+    ("liquidity", "💧 Liquidity Agent", "LP lock & depth"),
+    ("holder", "👥 Holder Agent", "Holder concentration"),
+    ("social", "🌐 Social Agent", "Social presence"),
+]
+
+
 def render_header() -> None:
-    """Render the app header with modern styling."""
+    """Render the branded hero header."""
     st.markdown(
-        '<p class="main-title">🛡️ RugGuard AI</p>'
-        '<p class="subtitle">Token Scam & Honeypot Detector — Powered by 4 AI Agents</p>'
-        '<div class="accent-bar"></div>',
+        '<div class="brand-container">'
+        '<div class="brand-logo">🛡️</div>'
+        '<div class="brand-name">RugGuard AI</div>'
+        '<div class="brand-tagline">Token Scam & Honeypot Detector — Powered by 4 AI Agents</div>'
+        '<div class="brand-divider"></div>'
+        '</div>',
         unsafe_allow_html=True,
     )
 
 
 def render_input_section(chain_options: dict, default_chain: str) -> tuple[str, str]:
-    """Render the chain selector and address input. Returns (chain, address)."""
-    st.markdown('<div class="input-container">', unsafe_allow_html=True)
-
-    # Chain selector row
-    st.markdown('<div class="input-label">🔗 Blockchain</div>', unsafe_allow_html=True)
+    """Render the branded search/input card."""
     chain_labels = {k: v["name"] for k, v in chain_options.items()}
-    selected_label = st.selectbox(
-        "Blockchain",
-        options=list(chain_labels.keys()),
-        format_func=lambda k: chain_labels[k],
-        index=list(chain_labels.keys()).index(default_chain) if default_chain in chain_labels else 0,
-        label_visibility="collapsed",
-    )
-    chain_key = selected_label
+    selected_label = chain_labels.get(default_chain, list(chain_labels.keys())[0])
 
-    # Address input
-    st.markdown('<div class="input-label" style="margin-top:16px;">📝 Token / Contract Address</div>', unsafe_allow_html=True)
-    address = st.text_input(
-        "Token / Contract Address",
-        placeholder="0x... or Base58...",
-        help="Paste the token contract address (not a wallet, profile, or transaction hash). EVM: 0x + 40 hex. Solana: 43-44 Base58 chars.",
-        label_visibility="collapsed",
-    )
+    st.markdown('<div class="search-card">', unsafe_allow_html=True)
 
-    # Analyze button
-    st.markdown('<div style="margin-top:16px;">', unsafe_allow_html=True)
-    analyze_clicked = st.button("🔍 Analyze Token", type="primary", width="stretch")
+    col_chain, col_addr, col_btn = st.columns([1.2, 2.4, 0.8], gap="small")
+
+    with col_chain:
+        st.markdown('<span class="search-field-label">🔗 Chain</span>', unsafe_allow_html=True)
+        chain_key = st.selectbox(
+            "Blockchain",
+            options=list(chain_labels.keys()),
+            format_func=lambda k: chain_labels[k],
+            index=list(chain_labels.keys()).index(default_chain) if default_chain in chain_labels else 0,
+            label_visibility="collapsed",
+        )
+
+    with col_addr:
+        st.markdown('<span class="search-field-label">📝 Contract Address</span>', unsafe_allow_html=True)
+        address = st.text_input(
+            "Token / Contract Address",
+            placeholder="0x... or Base58...",
+            help="Paste the token contract address (not a wallet, profile, or transaction hash). EVM: 0x + 40 hex. Solana: 43-44 Base58 chars.",
+            label_visibility="collapsed",
+        )
+
+    with col_btn:
+        st.markdown('<div style="height: 24px;"></div>', unsafe_allow_html=True)
+        analyze_clicked = st.button("🔍 Analyze", type="primary", width="stretch")
+
     st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
     return chain_key, (address.strip() if address else "")
 
@@ -63,49 +75,188 @@ def render_risk_score(report: RiskReport) -> None:
     css_class = risk_class(score)
     color = risk_color_hex(score)
 
-    # Gauge chart
     gauge_fig: go.Figure = render_risk_gauge(score)
-    st.plotly_chart(gauge_fig, width="stretch")
+    st.plotly_chart(gauge_fig, width="stretch", config={"displayModeBar": False})
 
-    # Verdict text
     st.markdown(
-        f'<p class="risk-verdict {css_class}">{report.verdict}</p>',
+        f'<div class="gauge-section" style="padding-top:0;">'
+        f'<div class="risk-verdict {css_class}">{report.verdict}</div>'
+        f'<div class="token-meta">'
+        f'{format_token_name(report.token_name, report.token_symbol)}'
+        f' · {report.chain.title()}'
+        f' · {shorten_address(report.contract_address)}'
+        f'</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
-    # Token info
-    token_display = format_token_name(report.token_name, report.token_symbol)
-    chain_name = report.chain.title()
+
+def render_agent_cards_section(report: RiskReport) -> None:
+    """Render the 4 agent cards in a responsive grid."""
+    st.markdown('<div class="section-title">📊 Agent Analysis</div>', unsafe_allow_html=True)
+
+    cols = st.columns(4)
+    agent_colors = {
+        "contract": "#6366f1",
+        "liquidity": "#06b6d4",
+        "holder": "#10b981",
+        "social": "#f59e0b",
+    }
+    agent_icons = {
+        "contract": "🔍",
+        "liquidity": "💧",
+        "holder": "👥",
+        "social": "🌐",
+    }
+
+    for idx, (agent_key, title, subtitle) in enumerate(AGENT_META):
+        result = report.agent_results.get(agent_key)
+        with cols[idx]:
+            if result is None:
+                _render_empty_card(title)
+                continue
+
+            color = agent_colors.get(agent_key, "#6366f1")
+            icon = agent_icons.get(agent_key, "📊")
+
+            if result.has_error():
+                _render_error_card(title, subtitle, result.error, color)
+            else:
+                _render_score_card(title, subtitle, result, color, icon)
+
+
+def _render_empty_card(title: str) -> None:
     st.markdown(
-        f'<p class="token-info">'
-        f"{token_display} · {chain_name} · {shorten_address(report.contract_address)}"
-        f"</p>",
+        f'<div class="agent-card" style="--agent-color: #475569;">'
+        f'<div class="agent-card-header">'
+        f'<div class="agent-icon" style="background: rgba(71,85,105,0.15); color: #64748b;">⚪</div>'
+        f'<div><div class="agent-title">{title}</div>'
+        f'<div class="agent-subtitle">No data</div></div>'
+        f'</div>'
+        f'<div style="color:#334155; font-size:1.6rem; font-weight:700;">—</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
+
+
+def _render_error_card(title: str, subtitle: str, error: str, color: str) -> None:
+    st.markdown(
+        f'<div class="agent-card" style="--agent-color: #ef4444;">'
+        f'<div class="agent-card-header">'
+        f'<div class="agent-icon" style="background: rgba(239,68,68,0.1); color: #ef4444;">⚠</div>'
+        f'<div><div class="agent-title">{title}</div>'
+        f'<div class="agent-subtitle">{subtitle}</div></div>'
+        f'</div>'
+        f'<div style="color:#475569; font-size:1.6rem; font-weight:700;">N/A</div>'
+        f'<div class="agent-error">{error[:90]}</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def _render_score_card(title: str, subtitle: str, result: AgentResult, color: str, icon: str) -> None:
+    flags_html = ""
+    for flag in result.red_flags[:2]:
+        flags_html += f'<div class="agent-flag">{flag}</div>'
+
+    st.markdown(
+        f'<div class="agent-card" style="--agent-color: {color};">'
+        f'<div class="agent-card-header">'
+        f'<div class="agent-icon" style="background: {color}18; color: {color};">{icon}</div>'
+        f'<div><div class="agent-title">{title}</div>'
+        f'<div class="agent-subtitle">{subtitle}</div></div>'
+        f'</div>'
+        f'<div class="agent-score" style="color: {color};">{result.risk_score}</div>'
+        f'<div class="agent-score-max">/ 100</div>'
+        f'<div class="agent-bar-track">'
+        f'<div class="agent-bar-fill" style="width: {result.risk_score}%; background: {color};"></div>'
+        f'</div>'
+        f'<div class="agent-flags">{flags_html}</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    with st.expander("Details", expanded=False):
+        _render_agent_details(result.checks)
+
+
+def _render_agent_details(checks: dict) -> None:
+    for name, val in checks.items():
+        if name in ("owner_address", "website_url", "twitter_url", "telegram_url"):
+            continue
+
+        display = name.replace("_", " ").title()
+        icon = "⚪"
+        val_class = ""
+        val_text = "N/A"
+
+        if isinstance(val, bool):
+            risky = _is_risky_check(name, val)
+            icon = "❌" if risky else "✅"
+            val_class = "danger" if risky else "safe"
+            val_text = "Yes" if val else "No"
+        elif isinstance(val, float):
+            icon = "📊"
+            val_text = f"{val:,.2f}"
+            val_class = "danger" if val > 0 else ""
+        elif isinstance(val, int) and not isinstance(val, bool):
+            icon = "📊"
+            val_text = f"{val:,}"
+        elif isinstance(val, str) and val:
+            icon = "📝"
+            val_text = val
+
+        st.markdown(
+            f'<div class="check-row">'
+            f'<span class="check-icon">{icon}</span>'
+            f'<span class="check-label">{display}</span>'
+            f'<span class="check-value {val_class}">{val_text}</span>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+
+def _is_risky_check(name: str, value: bool) -> bool:
+    risky_when_true = {
+        "is_honeypot", "is_mintable", "can_take_back_ownership",
+        "has_owner_change_balance", "has_hidden_owner", "is_proxy",
+        "has_self_destruct", "has_blacklist_function",
+        "has_trading_cooldown", "is_deployer_holding",
+        "are_top_holders_contracts", "is_fake_token", "is_airdrop_scam",
+    }
+    risky_when_false = {
+        "is_open_source", "lp_locked", "has_website",
+        "has_twitter", "has_telegram", "is_on_coingecko",
+    }
+    if name in risky_when_true:
+        return value
+    if name in risky_when_false:
+        return not value
+    return False
 
 
 def render_ai_explanation(report: RiskReport) -> None:
     """Render the AI-generated plain-language explanation."""
-    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
     st.markdown(
-        '<div class="section-header">🤖 AI Analysis</div>',
+        '<div class="section-title">🤖 AI Analysis</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
-        f'<div class="ai-explanation">{report.ai_explanation}</div>',
+        f'<div class="ai-box">{report.ai_explanation}</div>',
         unsafe_allow_html=True,
     )
 
 
 def render_detailed_findings(report: RiskReport) -> None:
     """Render expandable detailed findings for each agent."""
-    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
     st.markdown(
-        '<div class="section-header">📋 Detailed Findings</div>',
+        '<div class="section-title">📋 Detailed Findings</div>',
         unsafe_allow_html=True,
     )
 
-    for agent_key, title, _subtitle, _accent in AGENT_META:
+    for agent_key, title, _subtitle in AGENT_META:
         result = report.agent_results.get(agent_key)
         if result is None:
             continue
@@ -153,7 +304,7 @@ def render_disclaimer() -> None:
     """Render the educational disclaimer."""
     st.markdown(
         '<div class="disclaimer">'
-        "⚠️ <strong>RugGuard AI is for educational and informational purposes only.</strong><br>"
+        "⚠️ <strong>RugGuard AI is for educational and informational purposes only.</strong> "
         "It does NOT constitute financial advice. Always do your own research (DYOR) "
         "before interacting with any token. The creators are not responsible for any "
         "financial losses."
@@ -165,20 +316,7 @@ def render_disclaimer() -> None:
 def render_full_report(report: RiskReport) -> None:
     """Render the complete risk report dashboard."""
     render_risk_score(report)
-    st.markdown("")
-    render_agent_cards(report)
-    st.markdown("")
+    render_agent_cards_section(report)
     render_ai_explanation(report)
-    st.markdown("")
     render_detailed_findings(report)
-    st.markdown("")
     render_disclaimer()
-
-
-# Re-export AGENT_META for agent_cards module
-AGENT_META = [
-    ("contract", "🔍 Contract Auditor", "Smart contract security", "#6366f1"),
-    ("liquidity", "💧 Liquidity Agent", "LP lock & depth", "#06b6d4"),
-    ("holder", "👥 Holder Agent", "Holder concentration", "#10b981"),
-    ("social", "🌐 Social Agent", "Social presence", "#f59e0b"),
-]
