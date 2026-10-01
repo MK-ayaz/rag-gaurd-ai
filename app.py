@@ -12,7 +12,7 @@ from config import CHAINS
 from utils.validators import is_solana_tx, is_tx_hash, normalize_address, validate_address, validate_chain
 from agents.orchestrator import RugGuardOrchestrator
 from ui.styles import apply_styles
-from ui.icons import ICON_CHAIN, ICON_DEMO, ICON_SOURCE, ICON_SETTINGS, ICON_SHIELD
+from ui.icons import BRAND_SHIELD, ICON_CHAIN, ICON_DEMO, ICON_SOURCE, ICON_SETTINGS
 from ui.dashboard import (
     render_header,
     render_input_section,
@@ -34,7 +34,7 @@ render_header()
 with st.sidebar:
     st.markdown(
         f'<div style="font-size:1.1rem; font-weight:700; margin-bottom:10px; color:#e2e8f0; display:flex; align-items:center; gap:8px;">'
-        f'{ICON_SHIELD} About RugGuard AI</div>',
+        f'{BRAND_SHIELD} About RugGuard AI</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
