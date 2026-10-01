@@ -9,7 +9,7 @@ from __future__ import annotations
 import streamlit as st
 
 from config import CHAINS
-from utils.validators import validate_address, validate_chain
+from utils.validators import normalize_address, validate_address, validate_chain
 from agents.orchestrator import RugGuardOrchestrator
 from ui.styles import apply_styles
 from ui.dashboard import (
@@ -83,15 +83,23 @@ if "demo_address" in st.session_state:
 
 # Validation and analysis
 if address:
-    if not validate_address(address):
+    normalized = normalize_address(address)
+    if not normalized:
+        st.error(
+            "❌ Invalid address format. Paste a token contract address like "
+            "`0x5CF00327Edb646632BB69f1D3C38224685AEEb31`, or an Etherscan URL "
+            "containing one."
+        )
+    elif not validate_address(normalized):
         st.error(
             "❌ Invalid address format. A valid address starts with '0x' followed by "
-            "40 hexadecimal characters (e.g., 0xdAC17F958D2ee523a2206206994597C13D831ec7)."
+            "40 hexadecimal characters."
         )
+    elif not validate_chain(chain_key):
     elif not validate_chain(chain_key):
         st.error(f"❌ Unsupported chain. Supported chains: {', '.join(CHAINS.keys())}")
     else:
-        orchestrator = RugGuardOrchestrator(address, chain_key)
+        orchestrator = RugGuardOrchestrator(normalized, chain_key)
 
         with st.spinner("🔍 Analyzing token..."):
             # Show which agents are running
