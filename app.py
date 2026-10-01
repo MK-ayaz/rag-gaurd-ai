@@ -86,26 +86,30 @@ if address:
     normalized = normalize_address(address)
     if not normalized:
         st.error(
-            "❌ Invalid address format. Paste a token contract address like "
+            "❌ That does not look like a token contract address. "
+            "Paste the token's contract address, like "
             "`0x5CF00327Edb646632BB69f1D3C38224685AEEb31`, or an explorer URL "
-            "containing one (Etherscan, BscScan, PolygonScan, Solscan)."
+            "containing one (Etherscan, BscScan, PolygonScan, Solscan). "
+            "Do not paste a wallet address, profile, or transaction hash."
         )
     elif is_tx_hash(normalized):
         st.error(
-            "❌ That looks like a transaction hash, not a contract address. "
+            "❌ That looks like a transaction hash, not a token contract address. "
             "Transaction hashes are 64 characters; contract addresses are 40. "
             "On your explorer, find the **Token Contract** address instead."
         )
     elif is_solana_tx(normalized):
         st.error(
-            "❌ That looks like a Solana transaction signature, not a contract address. "
+            "❌ That looks like a Solana transaction signature, not a token contract address. "
             "Transaction signatures are 87-88 characters; contract addresses are 43-44. "
             "On Solscan, find the **Token Account** address instead."
         )
     elif not validate_address(normalized):
         st.error(
-            "❌ Invalid address format. A valid EVM address starts with '0x' followed by "
-            "40 hexadecimal characters. A Solana address is 43-44 Base58 characters."
+            "❌ That does not look like a token contract address. "
+            "A valid EVM contract address starts with '0x' followed by 40 hexadecimal characters. "
+            "A Solana token account address is 43-44 Base58 characters. "
+            "Do not paste a wallet address, profile, or transaction hash."
         )
     elif not validate_chain(chain_key):
         st.error(f"❌ Unsupported chain. Supported chains: {', '.join(CHAINS.keys())}")
