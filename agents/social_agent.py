@@ -20,11 +20,25 @@ def _to_bool(value: Any) -> bool:
     return bool(value)
 
 
-def _check_coingecko(address: str) -> bool:
-    """Check if a token is listed on CoinGecko by searching its API."""
+_COINGECKO_PLATFORM = {
+    "ethereum": "ethereum",
+    "bsc": "binance-smart-chain",
+    "polygon": "polygon-pos",
+}
+
+
+def _check_coingecko(address: str, chain: str) -> bool:
+    """Check if a token is listed on CoinGecko by searching its API.
+
+    Uses the correct platform path for each chain. Solana has no contract
+    address lookup endpoint on CoinGecko, so it always returns False.
+    """
+    platform = _COINGECKO_PLATFORM.get(chain)
+    if not platform:
+        return False
     try:
         resp = requests.get(
-            f"https://api.coingecko.com/api/v3/coins/ethereum/contract/{address.lower()}",
+            f"https://api.coingecko.com/api/v3/coins/{platform}/contract/{address.lower()}",
             timeout=API_TIMEOUT,
         )
         return resp.status_code == 200
@@ -84,7 +98,7 @@ class SocialAgent:
                 pass
 
         # CoinGecko listing check
-        is_on_coingecko = _check_coingecko(address) if chain == "ethereum" else False
+        is_on_coingecko = _check_coingecko(address, chain)
 
         checks: Dict[str, Any] = {
             "has_website": has_website,

@@ -41,7 +41,7 @@ CHAINS = {
     "solana": {
         "chain_id": 101,
         "name": "Solana",
-        "explorer_api": "https://api.solscan.io",
+        "explorer_api": "https://public-api.solscan.io",
         "explorer_url": "https://solscan.io",
         "native_currency": "SOL",
         "api_key_env": "SOLSCAN_API_KEY",
