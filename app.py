@@ -96,7 +96,6 @@ if address:
             "40 hexadecimal characters."
         )
     elif not validate_chain(chain_key):
-    elif not validate_chain(chain_key):
         st.error(f"❌ Unsupported chain. Supported chains: {', '.join(CHAINS.keys())}")
     else:
         orchestrator = RugGuardOrchestrator(normalized, chain_key)
