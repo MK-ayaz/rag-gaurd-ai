@@ -9,7 +9,7 @@ from __future__ import annotations
 import streamlit as st
 
 from config import CHAINS
-from utils.validators import normalize_address, validate_address, validate_chain
+from utils.validators import is_tx_hash, normalize_address, validate_address, validate_chain
 from agents.orchestrator import RugGuardOrchestrator
 from ui.styles import apply_styles
 from ui.dashboard import (
@@ -87,13 +87,19 @@ if address:
     if not normalized:
         st.error(
             "❌ Invalid address format. Paste a token contract address like "
-            "`0x5CF00327Edb646632BB69f1D3C38224685AEEb31`, or an Etherscan URL "
-            "containing one."
+            "`0x5CF00327Edb646632BB69f1D3C38224685AEEb31`, or an explorer URL "
+            "containing one (Etherscan, BscScan, PolygonScan, Solscan)."
+        )
+    elif is_tx_hash(normalized):
+        st.error(
+            "❌ That looks like a transaction hash, not a contract address. "
+            "Transaction hashes are 64 characters; contract addresses are 40. "
+            "On your explorer, find the **Token Contract** address instead."
         )
     elif not validate_address(normalized):
         st.error(
-            "❌ Invalid address format. A valid address starts with '0x' followed by "
-            "40 hexadecimal characters."
+            "❌ Invalid address format. A valid EVM address starts with '0x' followed by "
+            "40 hexadecimal characters. A Solana address is 43-44 Base58 characters."
         )
     elif not validate_chain(chain_key):
         st.error(f"❌ Unsupported chain. Supported chains: {', '.join(CHAINS.keys())}")

@@ -9,6 +9,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY", "")
 BSCSCAN_API_KEY = os.getenv("BSCSCAN_API_KEY", "")
 POLYGONSCAN_API_KEY = os.getenv("POLYGONSCAN_API_KEY", "")
+SOLSCAN_API_KEY = os.getenv("SOLSCAN_API_KEY", "")
 
 GROQ_MODEL = "openai/gpt-oss-20b"
 
@@ -36,6 +37,14 @@ CHAINS = {
         "explorer_url": "https://polygonscan.com",
         "native_currency": "MATIC",
         "api_key_env": "POLYGONSCAN_API_KEY",
+    },
+    "solana": {
+        "chain_id": 101,
+        "name": "Solana",
+        "explorer_api": "https://api.solscan.io",
+        "explorer_url": "https://solscan.io",
+        "native_currency": "SOL",
+        "api_key_env": "SOLSCAN_API_KEY",
     },
 }
 

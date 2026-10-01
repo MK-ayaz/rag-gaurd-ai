@@ -47,7 +47,7 @@ def render_input_section(chain_options: dict, default_chain: str) -> tuple[str, 
 
     analyze_col, _ = st.columns([1, 3])
     with analyze_col:
-        analyze_clicked = st.button("🔍 Analyze Token", type="primary", use_container_width=True)
+        analyze_clicked = st.button("🔍 Analyze Token", type="primary", width="stretch")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -62,7 +62,7 @@ def render_risk_score(report: RiskReport) -> None:
 
     # Gauge chart
     gauge_fig: go.Figure = render_risk_gauge(score)
-    st.plotly_chart(gauge_fig, use_container_width=True)
+    st.plotly_chart(gauge_fig, width="stretch")
 
     # Verdict text
     st.markdown(
