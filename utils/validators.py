@@ -19,6 +19,17 @@ def is_tx_hash(address: str) -> bool:
     return bool(_TX_HASH_PATTERN.match(address.strip()))
 
 
+# Solana transaction signature: Base58, 87-88 chars
+_SOL_TX_PATTERN = re.compile(r"^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{87,88}$")
+
+
+def is_solana_tx(address: str) -> bool:
+    """Return True if the string looks like a Solana transaction signature."""
+    if not address:
+        return False
+    return bool(_SOL_TX_PATTERN.match(address.strip()))
+
+
 # Solana address: Base58, no 0x prefix, 43-44 chars
 _SOL_PATTERN = re.compile(r"^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}$")
 
@@ -39,7 +50,7 @@ def normalize_address(raw: str) -> str:
     url_match = re.search(r"https?://\S+", s)
     if url_match:
         s = url_match.group(0)
-    # Try EVM explorer path extraction
+    # Try EVM explorer path extraction (/address/ or /token/)
     evm_path = _URL_PATH_PATTERN.search(s)
     if evm_path:
         return evm_path.group(1)
@@ -47,6 +58,11 @@ def normalize_address(raw: str) -> str:
     sol_path = re.search(r"solscan\.io/account/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})", s)
     if sol_path:
         return sol_path.group(1)
+    # /tx/ paths contain transaction hashes, not contract addresses
+    # Extract the hash so is_tx_hash() can identify it upstream
+    tx_match = re.search(r"/tx/(0x[a-fA-F0-9]{64}|[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{87,88})", s)
+    if tx_match:
+        return tx_match.group(1)
     # Plain input: detect Solana (Base58, no 0x) or EVM (starts with 0x)
     if re.match(r"^0x[a-fA-F0-9]+$", s):
         return s

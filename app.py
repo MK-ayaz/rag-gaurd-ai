@@ -9,7 +9,7 @@ from __future__ import annotations
 import streamlit as st
 
 from config import CHAINS
-from utils.validators import is_tx_hash, normalize_address, validate_address, validate_chain
+from utils.validators import is_solana_tx, is_tx_hash, normalize_address, validate_address, validate_chain
 from agents.orchestrator import RugGuardOrchestrator
 from ui.styles import apply_styles
 from ui.dashboard import (
@@ -95,6 +95,12 @@ if address:
             "❌ That looks like a transaction hash, not a contract address. "
             "Transaction hashes are 64 characters; contract addresses are 40. "
             "On your explorer, find the **Token Contract** address instead."
+        )
+    elif is_solana_tx(normalized):
+        st.error(
+            "❌ That looks like a Solana transaction signature, not a contract address. "
+            "Transaction signatures are 87-88 characters; contract addresses are 43-44. "
+            "On Solscan, find the **Token Account** address instead."
         )
     elif not validate_address(normalized):
         st.error(

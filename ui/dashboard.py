@@ -41,8 +41,8 @@ def render_input_section(chain_options: dict, default_chain: str) -> tuple[str, 
     with col_addr:
         address = st.text_input(
             "Token Contract Address",
-            placeholder="0x...",
-            help="Paste the token's smart contract address (0x followed by 40 hex characters)",
+            placeholder="0x... or Base58...",
+            help="Paste the token's smart contract address (EVM: 0x + 40 hex; Solana: 43-44 Base58 chars)",
         )
 
     analyze_col, _ = st.columns([1, 3])
