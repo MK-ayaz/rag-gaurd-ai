@@ -1,4 +1,4 @@
-"""Main dashboard layout — assembles all UI components into the full report view."""
+"""Main dashboard layout — modern professional UI."""
 
 from __future__ import annotations
 
@@ -6,18 +6,18 @@ import streamlit as st
 import plotly.graph_objects as go
 
 from models.risk_report import RiskReport
-from ui.styles import risk_class, risk_color_hex, risk_class as _rc
+from ui.styles import risk_class, risk_color_hex
 from ui.risk_gauge import render_risk_gauge
 from ui.agent_cards import render_agent_cards
 from utils.formatters import shorten_address, format_usd, format_token_name
 
 
 def render_header() -> None:
-    """Render the app header."""
+    """Render the app header with modern styling."""
     st.markdown(
         '<p class="main-title">🛡️ RugGuard AI</p>'
-        '<p class="subtitle">Token Scam & Honeypot Detector — '
-        "Powered by 4 AI Agents</p>",
+        '<p class="subtitle">Token Scam & Honeypot Detector — Powered by 4 AI Agents</p>'
+        '<div class="accent-bar"></div>',
         unsafe_allow_html=True,
     )
 
@@ -26,28 +26,31 @@ def render_input_section(chain_options: dict, default_chain: str) -> tuple[str, 
     """Render the chain selector and address input. Returns (chain, address)."""
     st.markdown('<div class="input-container">', unsafe_allow_html=True)
 
-    col_chain, col_addr = st.columns([1, 3])
+    # Chain selector row
+    st.markdown('<div class="input-label">🔗 Blockchain</div>', unsafe_allow_html=True)
+    chain_labels = {k: v["name"] for k, v in chain_options.items()}
+    selected_label = st.selectbox(
+        "Blockchain",
+        options=list(chain_labels.keys()),
+        format_func=lambda k: chain_labels[k],
+        index=list(chain_labels.keys()).index(default_chain) if default_chain in chain_labels else 0,
+        label_visibility="collapsed",
+    )
+    chain_key = selected_label
 
-    with col_chain:
-        chain_labels = {k: v["name"] for k, v in chain_options.items()}
-        selected_label = st.selectbox(
-            "Blockchain",
-            options=list(chain_labels.keys()),
-            format_func=lambda k: chain_labels[k],
-            index=list(chain_labels.keys()).index(default_chain) if default_chain in chain_labels else 0,
-        )
-        chain_key = selected_label
+    # Address input
+    st.markdown('<div class="input-label" style="margin-top:16px;">📝 Token / Contract Address</div>', unsafe_allow_html=True)
+    address = st.text_input(
+        "Token / Contract Address",
+        placeholder="0x... or Base58...",
+        help="Paste the token contract address (not a wallet, profile, or transaction hash). EVM: 0x + 40 hex. Solana: 43-44 Base58 chars.",
+        label_visibility="collapsed",
+    )
 
-    with col_addr:
-        address = st.text_input(
-            "Token / Contract Address",
-            placeholder="0x... or Base58...",
-            help="Paste the token contract address (not a wallet, profile, or transaction hash). EVM: 0x + 40 hex. Solana: 43-44 Base58 chars.",
-        )
-
-    analyze_col, _ = st.columns([1, 3])
-    with analyze_col:
-        analyze_clicked = st.button("🔍 Analyze Token", type="primary", width="stretch")
+    # Analyze button
+    st.markdown('<div style="margin-top:16px;">', unsafe_allow_html=True)
+    analyze_clicked = st.button("🔍 Analyze Token", type="primary", width="stretch")
+    st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -66,7 +69,7 @@ def render_risk_score(report: RiskReport) -> None:
 
     # Verdict text
     st.markdown(
-        f'<p class="{css_class}">{report.verdict}</p>',
+        f'<p class="risk-verdict {css_class}">{report.verdict}</p>',
         unsafe_allow_html=True,
     )
 
@@ -74,15 +77,20 @@ def render_risk_score(report: RiskReport) -> None:
     token_display = format_token_name(report.token_name, report.token_symbol)
     chain_name = report.chain.title()
     st.markdown(
-        f'<p style="text-align:center; color:#a0a0b0; margin-top:-0.5rem;">'
-        f"{token_display} · {chain_name} · {shorten_address(report.contract_address)}</p>",
+        f'<p class="token-info">'
+        f"{token_display} · {chain_name} · {shorten_address(report.contract_address)}"
+        f"</p>",
         unsafe_allow_html=True,
     )
 
 
 def render_ai_explanation(report: RiskReport) -> None:
     """Render the AI-generated plain-language explanation."""
-    st.markdown("### 🤖 AI Analysis")
+    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-header">🤖 AI Analysis</div>',
+        unsafe_allow_html=True,
+    )
     st.markdown(
         f'<div class="ai-explanation">{report.ai_explanation}</div>',
         unsafe_allow_html=True,
@@ -91,21 +99,18 @@ def render_ai_explanation(report: RiskReport) -> None:
 
 def render_detailed_findings(report: RiskReport) -> None:
     """Render expandable detailed findings for each agent."""
-    st.markdown("### 📋 Detailed Findings")
+    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-header">📋 Detailed Findings</div>',
+        unsafe_allow_html=True,
+    )
 
-    agent_labels = {
-        "contract": "🔍 Contract Auditor",
-        "liquidity": "💧 Liquidity Agent",
-        "holder": "👥 Holder Agent",
-        "social": "🌐 Social Agent",
-    }
-
-    for agent_key, label in agent_labels.items():
+    for agent_key, title, _subtitle, _accent in AGENT_META:
         result = report.agent_results.get(agent_key)
         if result is None:
             continue
 
-        with st.expander(f"{label} — Score: {result.risk_score}/100", expanded=False):
+        with st.expander(f"{title} — Score: {result.risk_score}/100", expanded=False):
             if result.has_error():
                 st.error(f"Error during analysis: {result.error}")
             else:
@@ -157,14 +162,8 @@ def render_disclaimer() -> None:
     )
 
 
-def render_progress_updates() -> None:
-    """Placeholder for showing agent progress updates during analysis."""
-    pass
-
-
 def render_full_report(report: RiskReport) -> None:
     """Render the complete risk report dashboard."""
-    st.markdown("---")
     render_risk_score(report)
     st.markdown("")
     render_agent_cards(report)
@@ -174,3 +173,12 @@ def render_full_report(report: RiskReport) -> None:
     render_detailed_findings(report)
     st.markdown("")
     render_disclaimer()
+
+
+# Re-export AGENT_META for agent_cards module
+AGENT_META = [
+    ("contract", "🔍 Contract Auditor", "Smart contract security", "#6366f1"),
+    ("liquidity", "💧 Liquidity Agent", "LP lock & depth", "#06b6d4"),
+    ("holder", "👥 Holder Agent", "Holder concentration", "#10b981"),
+    ("social", "🌐 Social Agent", "Social presence", "#f59e0b"),
+]

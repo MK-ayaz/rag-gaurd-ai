@@ -29,32 +29,51 @@ st.set_page_config(
 apply_styles()
 render_header()
 
-# Sidebar with info
+# Sidebar
 with st.sidebar:
-    st.markdown("## 🛡️ About RugGuard AI")
     st.markdown(
-        "RugGuard AI analyzes any crypto token contract using **4 specialized agents**:\n\n"
-        "1. **🔍 Contract Auditor** — checks for honeypot, minting, blacklist\n"
-        "2. **💧 Liquidity Agent** — verifies LP lock and liquidity depth\n"
-        "3. **👥 Holder Agent** — analyzes holder concentration\n"
-        "4. **🌐 Social Agent** — checks social presence and scam reports\n\n"
-        "Results are combined into a **0–100 risk score** with a plain-language "
-        "AI explanation."
+        '<div style="font-size:1.3rem; font-weight:700; margin-bottom:12px;">🛡️ About</div>',
+        unsafe_allow_html=True,
     )
-    st.markdown("---")
-    st.markdown("### 🔗 Supported Chains")
+    st.markdown(
+        "RugGuard AI analyzes any crypto token contract using **4 specialized agents** "
+        "and combines their findings into a **0–100 risk score** with a plain-language "
+        "AI explanation.",
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+
+    st.markdown(
+        '<div style="font-size:0.85rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">'
+        "🔗 Supported Chains</div>",
+        unsafe_allow_html=True,
+    )
     for key, cfg in CHAINS.items():
-        st.markdown(f"- **{cfg['name']}** (ID: {cfg['chain_id']})")
-    st.markdown("---")
-    st.markdown("### ⚙️ Data Sources")
+        st.markdown(
+            f'<div class="chain-pill">'
+            f'<span>{cfg["name"]}</span>'
+            f'<span style="color:#475569; font-size:0.75rem;">ID {cfg["chain_id"]}</span>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+
+    st.markdown(
+        '<div style="font-size:0.85rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">'
+        "⚙️ Data Sources</div>",
+        unsafe_allow_html=True,
+    )
     st.markdown(
         "- GoPlusLabs (token security)\n"
         "- DexScreener (liquidity & volume)\n"
         "- Honeypot.is (honeypot detection)\n"
         "- CoinGecko (listing verification)\n"
-        "- Groq / Llama 3 (AI explanations)"
+        "- Groq / Llama 3 (AI explanations)",
     )
-    st.markdown("---")
+
+    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
     render_disclaimer()
 
 # Main input
@@ -117,7 +136,6 @@ if address:
         orchestrator = RugGuardOrchestrator(normalized, chain_key)
 
         with st.spinner("🔍 Analyzing token..."):
-            # Show which agents are running
             status = st.empty()
             status.info("Running Contract Auditor...")
             report = orchestrator.run_analysis(use_ai=True)
@@ -137,7 +155,7 @@ if address:
         render_full_report(report)
 else:
     st.markdown(
-        '<p style="text-align:center; color:#a0a0b0; margin-top:2rem;">'
+        '<p style="text-align:center; color:#64748b; margin-top:2rem; font-size:0.95rem;">'
         "👆 Enter a token contract address above to begin analysis, "
         "or try one of the demo tokens."
         "</p>",
