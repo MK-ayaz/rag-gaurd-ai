@@ -30,7 +30,7 @@ An AI model (Groq / Llama) then explains the findings in plain language.
 
 ## How to Use
 
-1. Open the app on [Streamlit Cloud](https://rug-guard-ai.streamlit.app/) (or run locally)
+1. Open the app on [Streamlit Cloud](https://rag-gaurd-by-niffler-group-ygrsx9wvevpousv2ahxjdt.streamlit.app/) (or run locally)
 2. Select a blockchain from the dropdown
 3. Paste a **token contract address** (not a wallet or profile address) — you can paste a bare address or an explorer URL:
    - `https://etherscan.io/address/0x5CF00327Edb646632BB69f1D3C38224685AEEb31`
