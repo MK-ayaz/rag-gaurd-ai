@@ -12,6 +12,7 @@ from config import CHAINS
 from utils.validators import is_solana_tx, is_tx_hash, normalize_address, validate_address, validate_chain
 from agents.orchestrator import RugGuardOrchestrator
 from ui.styles import apply_styles
+from ui.icons import ICON_CHAIN, ICON_DEMO, ICON_SOURCE, ICON_SETTINGS, ICON_SHIELD
 from ui.dashboard import (
     render_header,
     render_input_section,
@@ -32,7 +33,8 @@ render_header()
 # Sidebar
 with st.sidebar:
     st.markdown(
-        '<div style="font-size:1.1rem; font-weight:700; margin-bottom:10px; color:#e2e8f0;">🛡️ About RugGuard AI</div>',
+        f'<div style="font-size:1.1rem; font-weight:700; margin-bottom:10px; color:#e2e8f0; display:flex; align-items:center; gap:8px;">'
+        f'{ICON_SHIELD} About RugGuard AI</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
@@ -44,8 +46,8 @@ with st.sidebar:
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
     st.markdown(
-        '<div style="font-size:0.75rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;">'
-        "🔗 Chains</div>",
+        f'<div style="font-size:0.75rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; display:flex; align-items:center; gap:6px;">'
+        f'{ICON_CHAIN} Chains</div>',
         unsafe_allow_html=True,
     )
     for key, cfg in CHAINS.items():
@@ -60,13 +62,13 @@ with st.sidebar:
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
     st.markdown(
-        '<div style="font-size:0.75rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;">'
-        "⚙️ Data Sources</div>",
+        f'<div style="font-size:0.75rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; display:flex; align-items:center; gap:6px;">'
+        f'{ICON_SETTINGS} Data Sources</div>',
         unsafe_allow_html=True,
     )
     st.markdown(
         "<span style='font-size:0.78rem; color:#475569; line-height:1.6;'>"
-        "GoPlusLabs · DexScreener · Honeypot.is · CoinGecko · Groq / Llama 3"
+        "GoPlusLabs · DexScreener · Honeypot.is · CoinGecko · Groq"
         "</span>",
         unsafe_allow_html=True,
     )
@@ -79,9 +81,10 @@ chain_key, address = render_input_section(CHAINS, "ethereum")
 
 # Demo tokens
 st.markdown(
-    '<div style="text-align:center; margin-top:20px; margin-bottom:12px;">'
-    '<span style="font-size:0.8rem; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:0.06em;">📋 Quick Demo</span>'
-    '</div>',
+    f'<div style="text-align:center; margin-top:20px; margin-bottom:12px;">'
+    f'<span style="font-size:0.8rem; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:0.06em; display:inline-flex; align-items:center; gap:6px;">'
+    f'{ICON_DEMO} Quick Demo</span>'
+    f'</div>',
     unsafe_allow_html=True,
 )
 demo_col1, demo_col2, demo_col3 = st.columns(3)

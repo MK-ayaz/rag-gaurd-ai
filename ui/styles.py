@@ -32,6 +32,18 @@ CUSTOM_CSS = """
         position: relative;
     }
 
+    @media (min-width: 1200px) {
+        .brand-container {
+            padding: 48px 24px 36px;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .brand-container {
+            padding: 56px 32px 40px;
+        }
+    }
+
     .brand-logo {
         display: inline-flex;
         align-items: center;
@@ -43,6 +55,22 @@ CUSTOM_CSS = """
         margin-bottom: 16px;
         box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
         font-size: 2rem;
+    }
+
+    @media (min-width: 1200px) {
+        .brand-logo {
+            width: 72px;
+            height: 72px;
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            font-size: 2.5rem;
+        }
     }
 
     .brand-name {
@@ -57,11 +85,35 @@ CUSTOM_CSS = """
         background-clip: text;
     }
 
+    @media (min-width: 1200px) {
+        .brand-name {
+            font-size: 3rem;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .brand-name {
+            font-size: 3.5rem;
+        }
+    }
+
     .brand-tagline {
         font-size: 0.95rem;
         color: #64748b;
         font-weight: 400;
         letter-spacing: 0.02em;
+    }
+
+    @media (min-width: 1200px) {
+        .brand-tagline {
+            font-size: 1.05rem;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .brand-tagline {
+            font-size: 1.15rem;
+        }
     }
 
     .brand-divider {
@@ -86,6 +138,20 @@ CUSTOM_CSS = """
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
+    @media (min-width: 1200px) {
+        .search-card {
+            max-width: 900px;
+            padding: 32px;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .search-card {
+            max-width: 1000px;
+            padding: 36px;
+        }
+    }
+
     .search-row {
         display: flex;
         gap: 12px;
@@ -106,6 +172,12 @@ CUSTOM_CSS = """
         display: block;
     }
 
+    @media (min-width: 1200px) {
+        .search-field-label {
+            font-size: 0.75rem;
+        }
+    }
+
     .search-btn {
         background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
         color: white !important;
@@ -118,6 +190,13 @@ CUSTOM_CSS = """
         box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35) !important;
         transition: all 0.2s ease !important;
         white-space: nowrap;
+    }
+
+    @media (min-width: 1200px) {
+        .search-btn {
+            padding: 13px 32px !important;
+            font-size: 1rem !important;
+        }
     }
 
     .search-btn:hover {
@@ -179,6 +258,20 @@ CUSTOM_CSS = """
         padding: 0 16px;
     }
 
+    @media (min-width: 1200px) {
+        .results-container {
+            max-width: 1200px;
+            padding: 0 24px;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .results-container {
+            max-width: 1400px;
+            padding: 0 32px;
+        }
+    }
+
     .results-header {
         text-align: center;
         padding: 24px 0 16px;
@@ -195,12 +288,36 @@ CUSTOM_CSS = """
         backdrop-filter: blur(10px);
     }
 
+    @media (min-width: 1200px) {
+        .gauge-section {
+            padding: 40px 32px;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .gauge-section {
+            padding: 48px 40px;
+        }
+    }
+
     .risk-verdict {
         font-size: 1.75rem;
         font-weight: 800;
         text-align: center;
         margin-top: 8px;
         letter-spacing: -0.02em;
+    }
+
+    @media (min-width: 1200px) {
+        .risk-verdict {
+            font-size: 2rem;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .risk-verdict {
+            font-size: 2.25rem;
+        }
     }
 
     .risk-critical { color: #ef4444; }
@@ -227,6 +344,34 @@ CUSTOM_CSS = """
     @media (max-width: 900px) {
         .agent-grid {
             grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .agent-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .agent-card {
+            padding: 24px;
+        }
+        .agent-score {
+            font-size: 2.6rem;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .agent-grid {
+            gap: 24px;
+        }
+        .agent-card {
+            padding: 28px;
+        }
+        .agent-score {
+            font-size: 3rem;
+        }
+        .agent-title {
+            font-size: 1rem;
         }
     }
 
@@ -370,6 +515,20 @@ CUSTOM_CSS = """
         gap: 8px;
     }
 
+    @media (min-width: 1200px) {
+        .section-title {
+            font-size: 1.15rem;
+            margin-bottom: 18px;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .section-title {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+        }
+    }
+
     .ai-box {
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
         border: 1px solid rgba(99, 102, 241, 0.15);
@@ -379,6 +538,20 @@ CUSTOM_CSS = """
         font-size: 0.92rem;
         line-height: 1.75;
         color: #cbd5e1;
+    }
+
+    @media (min-width: 1200px) {
+        .ai-box {
+            padding: 24px 28px;
+            font-size: 1rem;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .ai-box {
+            padding: 28px 32px;
+            font-size: 1.05rem;
+        }
     }
 
     /* ── Detailed Findings ── */
