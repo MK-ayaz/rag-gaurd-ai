@@ -37,7 +37,7 @@ def render_header() -> None:
     """Render the branded hero header."""
     st.markdown(
         '<div class="brand-container">'
-        '<div class="brand-logo">🛡️</div>'
+        '<div class="brand-logo">' + ICON_SHIELD + '</div>'
         '<div class="brand-name">RugGuard AI</div>'
         '<div class="brand-tagline">Token Scam & Honeypot Detector — Powered by 4 AI Agents</div>'
         '<div class="brand-divider"></div>'
@@ -118,12 +118,6 @@ def render_agent_cards_section(report: RiskReport) -> None:
         "liquidity": "#06b6d4",
         "holder": "#10b981",
         "social": "#f59e0b",
-    }
-    agent_icons = {
-        "contract": "🔍",
-        "liquidity": "💧",
-        "holder": "👥",
-        "social": "🌐",
     }
 
     for idx, (agent_key, icon_svg, title, subtitle) in enumerate(AGENT_META):
@@ -278,7 +272,7 @@ def render_detailed_findings(report: RiskReport) -> None:
         unsafe_allow_html=True,
     )
 
-    for agent_key, title, _subtitle in AGENT_META:
+    for agent_key, icon_svg, title, _subtitle in AGENT_META:
         result = report.agent_results.get(agent_key)
         if result is None:
             continue
@@ -288,9 +282,9 @@ def render_detailed_findings(report: RiskReport) -> None:
                 st.error(f"Error during analysis: {result.error}")
             else:
                 if result.red_flags:
-                    st.markdown("**🚩 Red Flags:**")
+                    st.markdown("**Red Flags:**")
                     for flag in result.red_flags:
-                        st.markdown(f"- ⚠️ {flag}")
+                        st.markdown(f"- {ICON_WARNING} {flag}")
                     st.markdown("")
 
                 st.markdown("**All Checks:**")
@@ -298,7 +292,7 @@ def render_detailed_findings(report: RiskReport) -> None:
                 for name, val in checks.items():
                     if name in ("owner_address", "website_url", "twitter_url", "telegram_url"):
                         if val:
-                            st.markdown(f"- 📝 **{name.replace('_', ' ').title()}**: `{val}`")
+                            st.markdown(f"- {ICON_SOURCE} **{name.replace('_', ' ').title()}**: `{val}`")
                         continue
                     _render_detail_item(name, val)
 
