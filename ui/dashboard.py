@@ -22,6 +22,7 @@ from ui.icons import (
     ICON_INFO,
     ICON_SEARCH,
     ICON_SHIELD,
+    ICON_SOURCE,
 )
 from utils.formatters import shorten_address, format_usd, format_token_name
 
