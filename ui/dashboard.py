@@ -21,7 +21,7 @@ from ui.icons import (
     ICON_WARNING,
     ICON_INFO,
     ICON_SEARCH,
-    BRAND_SHIELD,
+    ICON_SHIELD,
 )
 from utils.formatters import shorten_address, format_usd, format_token_name
 
@@ -38,7 +38,7 @@ def render_header() -> None:
     """Render the branded hero header."""
     st.markdown(
         '<div class="brand-container">'
-        '<div class="brand-logo">' + BRAND_SHIELD + '</div>'
+        '<div class="brand-logo">' + ICON_SHIELD + '</div>'
         '<div class="brand-name">RugGuard AI</div>'
         '<div class="brand-tagline">Token Scam & Honeypot Detector — Powered by 4 AI Agents</div>'
         '<div class="brand-divider"></div>'
